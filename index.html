@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <style>
+    #container {
+        /* display: flexbox; */
+        width: 100vw;
+        height: 100vh;
+        margin: 0px;
+        /* border: solid */
+    }
+
+    #display {
+        border: solid;
+        height: 20%;
+        margin: 0px;
+    }
+    
+    #btn-container {
+        border: solid;
+        height: 80%;
+        margin: 0px;
+        display: grid;
+    }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="display">
+        
+        </div>
+
+        <div id="btn-container">
+        
+        </div>
+    </div>
+    <script>
+        function add(num1,num2){
+            return num1 + num2
+        }
+
+        function subtract(num1,num2){
+            return num1 - num2
+        }
+
+        function multiply(num1,num2){
+            return num1*num2
+        }
+
+        function divide(num1,num2){
+            return num1 / num2
+        }
+
+        //Test Cases
+        //console.log(`1 + 1 is ${add(1,1)}`)
+        //console.log(`15 - 3 is ${subtract(15,3)}`)
+        //console.log(`9 * 8 is ${multiply(9,8)}`)
+        //console.log(`99 / 11 is ${divide(99,11)}`)
+
+        function operate(num1,num2,operator){
+            switch(operator){
+                case 'add':
+                    return add(num1,num2);
+                    break;
+
+                case 'subtract':
+                    return subtract(num1,num2);
+                    break;
+
+                case 'multiply':
+                    return multiply(num1,num2);
+                    break;
+
+                case 'divide':
+                    return divide(num1,num2);
+                    break;
+            
+                default:
+                    console.log('Operator switch error: No operator found')
+            }
+        }
+
+        function createCalculator(){
+            /* Creates a calculator using DOM manipulation */
+
+            const btns = document.querySelector('#btn-container')
+            btns.style.cssText = 'grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5,1fr);'
+
+            for(let i = 0; i<20; i++){
+                let div = document.createElement('div')
+                div.setAttribute('id',`div${i}`)
+                
+                btns.appendChild(div)
+            }
+        }
+
+        createCalculator();
+    </script>
+</body>
+</html>

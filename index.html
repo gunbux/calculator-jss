@@ -6,16 +6,19 @@
     <style>
     #container {
         /* display: flexbox; */
-        width: 100vw;
-        height: 100vh;
+        width: 98vw;
+        height: 95vh;
         margin: 0px;
         /* border: solid */
     }
 
     #display {
         border: solid;
+        background-color: black;
+        color: white;
         height: 20%;
         margin: 0px;
+        text-align: right;
     }
     
     #btn-container {
@@ -24,6 +27,48 @@
         margin: 0px;
         display: grid;
     }
+
+    .button {
+        /*display: flex
+        align-items: center;
+        justify-content: center;*/
+        text-align: center;
+        background-color: orange;
+        margin: 2px;
+        font-family: Arial;
+        font-size: 4vh;
+    }
+
+    p {
+        font-weight: bold;
+    }
+
+    .display {
+        margin: 20px;
+        font-family: Arial;
+        font-size: 6vh;
+    }
+
+    .button:hover {
+        transform: scale(1.1);
+        border: solid 5px;
+    }
+
+    .number {
+        background-color: grey;
+        border: solid grey;
+
+    }
+    
+    .operator {
+        background-color: orange;
+        border: solid orange;
+    }
+/*
+    .clicked {
+        background-color: #3C3C3C;
+    }
+*/
     </style>
 </head>
 <body>
@@ -37,6 +82,11 @@
         </div>
     </div>
     <script>
+
+        let currentoperator = '0'
+        let num1
+        let num2
+        let table = [num1,currentoperator,num2]
         function add(num1,num2){
             return num1 + num2
         }
@@ -60,6 +110,10 @@
         //console.log(`99 / 11 is ${divide(99,11)}`)
 
         function operate(num1,num2,operator){
+            num1 = parseInt(num1)
+            num2 = parseInt(num2)
+            
+            console.log(table)
             switch(operator){
                 case 'add':
                     return add(num1,num2);
@@ -82,6 +136,17 @@
             }
         }
 
+        function createDisplay(){
+            /* Creates the starting display*/
+            const display = document.querySelector('#display')
+
+            let displayText = document.createElement('p')
+            displayText.textContent = 0
+            displayText.classList.add('display')
+
+            display.appendChild(displayText)
+        }
+
         function createCalculator(){
             /* Creates a calculator using DOM manipulation */
 
@@ -91,12 +156,186 @@
             for(let i = 0; i<20; i++){
                 let div = document.createElement('div')
                 div.setAttribute('id',`div${i}`)
-                
+                div.classList.add('button')
                 btns.appendChild(div)
             }
         }
 
+        function modifyCalculator(){
+            /* Modifies the calculator button classes and ids*/
+            buttons = document.querySelectorAll('.button');
+            let operatorids = [3,7,11,15]
+            let numberids = [4,5,6,8,9,10,12,13,14,17]
+
+            buttons.forEach((button)=>{
+                /*console.log(button.id);*/
+                let buttonid = button.id.slice(3)
+                operatorids.forEach((operatorid)=>{
+                    if (buttonid == operatorid){
+                        button.classList.add('operator')
+                    }
+                });
+
+                numberids.forEach((numberid) => {
+                    if (buttonid == numberid){
+                        console.log('number button found')
+                        button.classList.add('number')
+                    }
+                })
+                /*if (buttonid in operatorid){
+                    console.log('Operator Button Found')
+                    console.log(`buttonid is ${buttonid} and button.id is ${button.id}`)
+                    button.classList.add('operator')
+                } else{
+                    button.classList.add('numbers')
+                }*/
+            });
+
+
+            numbers = document.querySelectorAll('.number')
+            let i = 9
+            numbers.forEach((number)=>{
+                //console.log(number.id)
+                const content = document.createElement('p')
+                content.textContent = `${i}`
+                i--
+
+                number.addEventListener('click',function(e){
+                    if (num1 != undefined && num2 == undefined){
+                        resetDisplay()
+                    }
+                    modifyDisplay(e.target.textContent)
+
+                    if (num1 != undefined){
+                        num2 = getDisplay()
+                    }
+
+                    console.table([num1,currentoperator,num2])
+                })
+
+                number.appendChild(content)
+
+            })
+
+            operators = document.querySelectorAll('.operator')
+            let op = ['/','*','+','-']
+            let oplist = ['divide', 'multiply','add','subtract']
+            let f = 0
+            operators.forEach((operator)=>{
+                /*console.log(operator.id)*/
+                const content = document.createElement('p')
+                operator.setAttribute('id',`${oplist[f]}`)
+                content.textContent = `${op[f]}`
+                f++
+                    
+                operator.addEventListener('click',function(e){
+                    if (num1 == undefined){
+                        num1 = getDisplay()
+                    }
+
+                    if (num1 != undefined && num2 != undefined){
+                        equals()
+                        num1 = getDisplay()
+                    }
+                    modifyOperator(`${operator.id}`)
+                    console.table([num1,currentoperator,num2])
+                    console.log(`e.target.id is ${operator.id}`)
+                    console.log(`currentoperator is ${currentoperator}`)
+                })
+
+                operator.appendChild(content)
+            })
+        }
+        
+        function getDisplay(){
+            const display = document.querySelector('.display')
+            return display.textContent
+        }
+
+        function modifyDisplay(input){
+            const display = document.querySelector('.display')
+            console.log(`modifying display with input ${input}`)
+            if (display.textContent == 0){
+                display.textContent = input
+            } else{
+                display.textContent += input
+            }
+
+        }
+
+        function resetDisplay(){
+            const display = document.querySelector('.display')
+            
+            display.textContent = 0
+        }
+
+        function modifyOperator(selectedoperator){
+            displayvalue = document.querySelector('.display').textContent
+            //think about this one
+            currentoperator = selectedoperator
+
+            }
+            /*if (num1 == undefined){
+                currentoperator = selectedoperator
+                num1 = displayvalue
+                console.log(table)
+                resetDisplay()
+            } else if (num1 != undefined && currentoperator != 0){
+                num2 = displayvalue
+                console.log(table)
+                if (num2 == 0){
+                    currentoperator = selectedoperator
+                } else{
+                num1 = operate(num1,num2,currentoperator)
+                num2 = undefined
+                currentoperator = selectedoperator
+                }
+            } 
+        }*/
+
+        createDisplay();
         createCalculator();
+        modifyCalculator();
+        
+        console.log(num1)
+
+        clear = document.querySelector('#div0')
+        content = document.createElement('p')
+        content.textContent = 'C'
+        clear.appendChild(content)
+        clear.addEventListener('click',()=>{
+            resetDisplay()
+            currentoperator = '0'
+            num1 = undefined
+            num2 = undefined
+        })
+
+        display = document.querySelector('.display')
+        displayvalue = display.textContent
+        equal = document.querySelector('#div19')
+        content = document.createElement('p')
+        content.textContent = '='
+        equal.appendChild(content)
+        function equals(){
+            if (num1 == undefined){
+                console.log('Error?')
+            } else{
+                console.log('equalling')
+                console.table([num1,currentoperator,num2])
+                resetDisplay()
+                modifyDisplay(operate(num1,num2,currentoperator))
+                num1 = undefined
+                num2 = undefined
+                currentoperator = '0'
+                console.log(`outputs are`)
+                console.table([num1,currentoperator,num2])
+            }
+        }
+
+        equal.addEventListener('click',equals)
+
+        resetDisplay()
+
     </script>
 </body>
 </html>
